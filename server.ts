@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import handler from './api/products';
+import 'dotenv/config'; // Load .env file
+import productHandler from './api/products';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,14 +11,10 @@ app.use(express.json());
 
 // Adapter to match Vercel handler signature
 // handler expects (req, res) where res has .status().json()
-// Express req/res are compatible enough for this usage.
-app.get('/api/products', async (req, res) => {
-    try {
-        await handler(req as any, res as any);
-    } catch (error) {
-        console.error('Unhandled Server Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+// Express req/res are compatible enough// Product API endpoint
+app.get('/api/products', (req, res) => {
+    // @ts-ignore
+    productHandler(req, res);
 });
 
 app.listen(PORT, () => {

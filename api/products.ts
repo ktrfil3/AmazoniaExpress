@@ -4,7 +4,7 @@ import sql from 'mssql';
 const config = {
     user: process.env.DB_USER || 'userdesarrollointernoama',
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
-    server: process.env.DB_SERVER || '192.168.10.100',
+    server: process.env.DB_SERVER || '200.149.92.208', // Default to Public IP for Vercel/Prod
     database: process.env.DB_NAME || 'AMAZONIA',
     port: parseInt(process.env.DB_PORT || '1433'),
     options: {
@@ -39,8 +39,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             SELECT 
                 P.CodProd as id, 
                 P.Descrip as nombre, 
-                P.Precio1 as precio, 
-                P.Precio2 as precioMayor, 
+                CASE WHEN P.PrecioU > 0 THEN P.PrecioU ELSE P.Precio1 END as precio, 
+                P.Precio1 as precioMayor, 
                 P.Existen as stock,
                 I.Descrip as categoria
             FROM SAPROD P

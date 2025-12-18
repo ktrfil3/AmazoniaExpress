@@ -2,10 +2,9 @@ import { useState, useMemo } from 'react';
 import { useProductStore } from '../store/useProductStore';
 import { ProductCard } from '../components/client/ProductCard';
 import { CheckoutForm } from '../components/client/CheckoutForm';
-import { LocationInput } from '../components/client/LocationInput';
 import { BottomCart } from '../components/client/BottomCart';
 import {
-    Filter,
+    Filter, Search,
     ShoppingBag, Hammer, Utensils, Paperclip,
     Monitor, Heart, Dog, Pill
 } from 'lucide-react';
@@ -49,14 +48,25 @@ export const ClientView = () => {
 
     return (
         <div className="min-h-screen bg-[#F6F6F6] pb-32 md:pb-20">
-            {/* Hero with Location */}
+            {/* Hero with Product Search */}
             <div className="bg-white pt-6 pb-8 mb-6 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h1 className="text-3xl md:text-7xl font-bold text-gray-900 mb-6">
                         {t('hero.title')} <span className="text-uber-500">{t('hero.subtitle')}</span>
                     </h1>
                     <p className="text-gray-800 mb-6 md:text-2xl font-bold ">{t('hero.description')}</p>
-                    <LocationInput />
+
+                    {/* Product Search Bar */}
+                    <div className="relative max-w-2xl bg-gray-100 rounded-full flex items-center px-4 py-3 focus-within:ring-2 focus-within:ring-black transition-all">
+                        <Search className="w-6 h-6 text-gray-500 mr-3" />
+                        <input
+                            type="text"
+                            placeholder="Buscar productos (ej. Arroz, Leche, Harina...)"
+                            className="bg-transparent border-none outline-none w-full text-lg placeholder-gray-500 text-gray-900"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 
