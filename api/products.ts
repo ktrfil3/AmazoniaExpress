@@ -2,10 +2,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import sql from 'mssql';
 
 const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    user: process.env.DB_USER || 'userdesarrollointernoama',
+    password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
     server: process.env.DB_SERVER || '200.149.92.208',
-    database: process.env.DB_NAME,
+    database: process.env.DB_NAME || 'AMAZONIA',
     port: parseInt(process.env.DB_PORT || '1433'),
     options: {
         encrypt: true, // Use true for Azure, false might be needed for local self-signed
