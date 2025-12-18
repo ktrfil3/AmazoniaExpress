@@ -28,37 +28,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        const pool = await sql.connect(config);
+        const pool = await sql.connect({
+            ...config,
+            connectionTimeout: 15000,
+            requestTimeout: 15000
+        });
 
-        // ADJUST THIS QUERY BASED ON YOUR EXACT TABLE NAMES
-        // Assumed Saint structure: SPRODUCTOS or SAPROD
-        // Descrip: Name/Description
-        // Precio1: Detail Price
-        // Precio2: Wholesale Price
-        // Existen: Stock
-        // CodProd: ID
         const result = await pool.request().query(`
-      SELECT 
-        CodProd as id, 
-        Descrip as nombre, 
-        Precio1 as precio, 
-        Precio2 as precioMayor, 
-        Existen as stock,
-        instancia as categoria -- Assuming 'instancia' maps to category/department
-      FROM SAPROD
-      WHERE Existen > 0
-    `);
+            SELECT 
+                CodProd as id, 
+                Descrip as nombre, 
+                Precio1 as precio, 
+                Precio2 as precioMayor, 
+                Existen as stock,
+                Refere as categoria
+            FROM SAPROD
+            WHERE Existen > 0
+        `);
 
-        // Map to your Product interface structure if needed, or return raw if it matches
+        // Map to your Product interface structure
         const products = result.recordset.map((row: any) => ({
             id: row.id,
             nombre: row.nombre,
             precio: row.precio,
             precioMayor: row.precioMayor,
             stock: row.stock,
-            categoria: 'Víveres', // Default, or map 'row.categoria' to your Department types
-            imagen: 'https://placehold.co/400x300?text=No+Image', // Placeholder
-            description: row.nombre // Use name as description if no separate desc
+            categoria: row.categoria || 'Víveres',
+            imagen: 'https://placehold.co/400x300?text=No+Image',
+            description: row.nombre
         }));
 
         res.status(200).json(products);

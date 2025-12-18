@@ -60,10 +60,10 @@ export const ClientView = () => {
                 {/* Horizontal Scrolling Categories */}
                 <div className="mb-8">
                     <h2 className="text-xl font-bold text-gray-900 mb-4">{t('categories.title')}</h2>
-                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
+                    <div className="flex gap-8 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
                         <button
                             onClick={() => setSelectedCategory('Todos')}
-                            className={`flex-shrink-0 flex flex-col items-center gap-2 transition-all ${selectedCategory === 'Todos' ? 'opacity-100' : 'opacity-60 hover:opacity-80'}`}
+                            className={`flex-shrink-0 flex flex-col items-center gap-2 transition-all min-w-[5.5rem] ${selectedCategory === 'Todos' ? 'opacity-100' : 'opacity-60 hover:opacity-80'}`}
                         >
                             <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${selectedCategory === 'Todos' ? 'bg-uber-500 text-white' : 'bg-white text-gray-600 shadow-uber'}`}>
                                 <ShoppingBag size={24} />
@@ -80,7 +80,7 @@ export const ClientView = () => {
                                 <button
                                     key={dept}
                                     onClick={() => setSelectedCategory(dept)}
-                                    className={`flex-shrink-0 flex flex-col items-center gap-2 transition-all ${isSelected ? 'opacity-100' : 'opacity-60 hover:opacity-80'}`}
+                                    className={`flex-shrink-0 flex flex-col items-center gap-2 transition-all min-w-[5.5rem] ${isSelected ? 'opacity-100' : 'opacity-60 hover:opacity-80'}`}
                                 >
                                     <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${isSelected ? 'bg-uber-500 text-white' : 'bg-white text-gray-600 shadow-uber'}`}>
                                         <Icon size={24} strokeWidth={1.5} />

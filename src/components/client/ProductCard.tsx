@@ -1,8 +1,9 @@
-import { Plus, Minus, Star } from 'lucide-react';
+import { Plus, Minus, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../../types';
 import { useCartStore } from '../../store/useCartStore';
 import { useCurrencyStore } from '../../store/useCurrencyStore';
+import { useFavoritesStore } from '../../store/useFavoritesStore';
 
 interface ProductCardProps {
     product: Product;
@@ -11,6 +12,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const { addToCart, items, updateQuantity } = useCartStore();
     const { format } = useCurrencyStore();
+    const { toggleFavorite, isFavorite } = useFavoritesStore();
 
     const cartItem = items.find(item => item.id === product.id);
     const quantity = cartItem?.quantity || 0;
@@ -49,6 +51,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                             {product.categoria === 'Maquillaje y Cuidado Personal' ? 'Cuidado' : product.categoria}
                         </span>
                     </div>
+
+                    {/* Favorite Button */}
+                    <Link // Use Link to prevent navigation to product detail when clicking heart
+                        to="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleFavorite(product.id);
+                        }}
+                        className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm transition-all"
+                    >
+                        <Heart
+                            size={18}
+                            className={`transition-colors ${isFavorite(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                        />
+                    </Link>
                 </div>
 
                 <div className="p-4">
@@ -63,8 +81,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                                         <Star
                                             key={star}
                                             className={`w-3 h-3 ${star <= Math.round(product.rating!)
-                                                    ? 'fill-yellow-400 text-yellow-400'
-                                                    : 'text-gray-300'
+                                                ? 'fill-yellow-400 text-yellow-400'
+                                                : 'text-gray-300'
                                                 }`}
                                         />
                                     ))}

@@ -9,8 +9,12 @@ interface CartState {
     removeFromCart: (productId: string | number) => void;
     updateQuantity: (productId: string | number, quantity: number) => void;
     clearCart: () => void;
-    getTotalPrice: () => number;
+    getTotalPrice: () => number; // Total with shipping
+    getSubtotal: () => number; // Items total
     getTotalItems: () => number;
+    shippingAddress: string;
+    shippingCost: number;
+    setShippingAddress: (address: string) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -73,14 +77,30 @@ export const useCartStore = create<CartState>()(
 
             clearCart: () => set({ items: [] }),
 
-            getTotalPrice: () => {
+            getSubtotal: () => {
                 const { items } = get();
                 return items.reduce((total, item) => total + (item.precio * item.quantity), 0);
+            },
+
+            getTotalPrice: () => {
+                const { getSubtotal, shippingCost } = get();
+                return getSubtotal() + shippingCost;
             },
 
             getTotalItems: () => {
                 const { items } = get();
                 return items.reduce((total, item) => total + item.quantity, 0);
+            },
+
+            shippingAddress: '',
+            shippingCost: 0,
+
+            setShippingAddress: (address) => {
+                const isSantaElena = address.toLowerCase().includes('santa elena');
+                set({
+                    shippingAddress: address,
+                    shippingCost: isSantaElena ? 5 : 0 // Default logic
+                });
             }
         }),
         {

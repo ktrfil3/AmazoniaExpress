@@ -182,9 +182,9 @@ export const Navbar = () => {
 
                     {/* Mobile Menu Button */}
                     <div className="flex items-center gap-2 md:hidden">
-                        <button
-                            onClick={() => document.getElementById('cart-section')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="relative p-2"
+                        <Link
+                            to="/cart"
+                            className="relative p-2 text-gray-900 dark:text-gray-100"
                         >
                             <ShoppingCart className="w-5 h-5" />
                             {getTotalItems() > 0 && (
@@ -192,8 +192,8 @@ export const Navbar = () => {
                                     {getTotalItems()}
                                 </span>
                             )}
-                        </button>
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
+                        </Link>
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-gray-900 dark:text-gray-100">
                             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
                     </div>

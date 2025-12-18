@@ -17,7 +17,7 @@ interface CheckoutFormInputs {
 }
 
 export const CheckoutForm = () => {
-    const { items, getTotalPrice, clearCart, removeFromCart } = useCartStore();
+    const { items, getTotalPrice, getSubtotal, shippingCost, clearCart, removeFromCart } = useCartStore();
     const { user } = useAuthStore();
     const { format } = useCurrencyStore();
     const { t } = useLanguageStore();
@@ -186,14 +186,16 @@ export const CheckoutForm = () => {
             <div className="border-t border-gray-200 pt-6 space-y-4">
                 <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-semibold text-gray-900">{format(getTotalPrice())}</span>
+                    <span className="font-semibold text-gray-900">{format(getSubtotal())}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         Envío
                     </span>
-                    <span className="font-semibold text-uber-500">Gratis</span>
+                    <span className={`font-semibold ${shippingCost === 0 ? 'text-uber-500' : 'text-gray-900'}`}>
+                        {shippingCost === 0 ? 'Gratis' : format(shippingCost)}
+                    </span>
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-gray-200">
                     <span className="text-base font-bold text-gray-900">Total</span>
