@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, LogOut, Globe, DollarSign, User, ChevronDown, Sun, Moon, Monitor } from 'lucide-react';
+import { ShoppingCart, Menu, X, LogOut, Globe, DollarSign, User, ChevronDown, Sun, Moon, Monitor, Heart } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useFavoritesStore } from '../../store/useFavoritesStore';
 import { useLanguageStore, type Language } from '../../store/useLanguageStore';
 import { useCurrencyStore, type Currency } from '../../store/useCurrencyStore';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -19,6 +20,7 @@ export const Navbar = () => {
     const { user, logout } = useAuthStore();
     const { language, setLanguage, t } = useLanguageStore();
     const { currency, setCurrency } = useCurrencyStore();
+    const { favorites } = useFavoritesStore();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -166,6 +168,19 @@ export const Navbar = () => {
                             </Link>
                         )}
 
+                        {/* Favorites */}
+                        <Link
+                            to="/favorites"
+                            className="relative p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        >
+                            <Heart className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                            {favorites.length > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                    {favorites.length}
+                                </span>
+                            )}
+                        </Link>
+
                         {/* Cart */}
                         <Link
                             to="/cart"
@@ -285,6 +300,13 @@ export const Navbar = () => {
                                 className="block px-4 py-3 text-base font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                             >
                                 🛒 Carrito {getTotalItems() > 0 && `(${getTotalItems()})`}
+                            </Link>
+                            <Link
+                                to="/favorites"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="block px-4 py-3 text-base font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                            >
+                                ❤️ Favoritos {favorites.length > 0 && `(${favorites.length})`}
                             </Link>
                         </div>
 

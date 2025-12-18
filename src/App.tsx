@@ -7,6 +7,7 @@ import { AuthPage } from './pages/AuthPage';
 import { ProductDetail } from './pages/ProductDetail';
 import { CartPage } from './pages/CartPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { FavoritesPage } from './pages/FavoritesPage';
 
 // Importaciones esenciales para el estado global y de autenticación
 import { useProductStore } from './store/useProductStore';
@@ -90,6 +91,13 @@ function App() {
           <ProtectedRoute>
             <Navbar />
             <ProfilePage />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/favorites" element={
+          <ProtectedRoute>
+            <Navbar />
+            <FavoritesPage />
           </ProtectedRoute>
         } />
 
