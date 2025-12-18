@@ -29,10 +29,10 @@ const departments: Department[] = [
 ];
 
 export const ClientView = () => {
-    const { products } = useProductStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<Department | 'Todos'>('Todos');
     const { t } = useLanguageStore();
+    const { products, isLoading, error } = useProductStore();
 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
@@ -97,27 +97,46 @@ export const ClientView = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Product Feed */}
                     <div className="lg:col-span-8">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-bold text-gray-900">
-                                {selectedCategory === 'Todos' ? t('products.all') : selectedCategory}
-                            </h2>
-                            <span className="text-sm text-gray-500">{filteredProducts.length} {t('products.items')}</span>
-                        </div>
+                        {isLoading && (
+                            <div className="flex justify-center py-20">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-uber-500"></div>
+                            </div>
+                        )}
 
-                        {filteredProducts.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {filteredProducts.map(product => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3">
+                                <div className="flex-1">
+                                    <p className="font-bold">Error cargando productos</p>
+                                    <p className="text-sm">{error}</p>
+                                </div>
                             </div>
-                        ) : (
-                            <div className="text-center py-20 bg-white rounded-2xl shadow-uber">
-                                <Filter className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-                                <p className="text-gray-500 text-lg">{t('products.noResults')}</p>
-                                <button onClick={() => { setSearchTerm(''); setSelectedCategory('Todos') }} className="mt-4 text-uber-500 hover:text-uber-600 font-medium">
-                                    {t('products.clearFilters')}
-                                </button>
-                            </div>
+                        )}
+
+                        {!isLoading && !error && (
+                            <>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-2xl font-bold text-gray-900">
+                                        {selectedCategory === 'Todos' ? t('products.all') : selectedCategory}
+                                    </h2>
+                                    <span className="text-sm text-gray-500">{filteredProducts.length} {t('products.items')}</span>
+                                </div>
+
+                                {filteredProducts.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {filteredProducts.map(product => (
+                                            <ProductCard key={product.id} product={product} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-20 bg-white rounded-2xl shadow-uber">
+                                        <Filter className="mx-auto h-12 w-12 text-gray-300 mb-3" />
+                                        <p className="text-gray-500 text-lg">{t('products.noResults')}</p>
+                                        <button onClick={() => { setSearchTerm(''); setSelectedCategory('Todos') }} className="mt-4 text-uber-500 hover:text-uber-600 font-medium">
+                                            {t('products.clearFilters')}
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
 
