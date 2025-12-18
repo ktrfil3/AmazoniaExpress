@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Product } from '../types';
-import { mockProducts } from '../data/mockData';
+// import { mockProducts } from '../data/mockData';
 
 interface ProductState {
     products: Product[];
