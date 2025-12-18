@@ -4,7 +4,7 @@ import sql from 'mssql';
 const config = {
     user: process.env.DB_USER || 'userdesarrollointernoama',
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
-    server: process.env.DB_SERVER || '200.149.92.208',
+    server: process.env.DB_SERVER || '192.168.10.100',
     database: process.env.DB_NAME || 'AMAZONIA',
     port: parseInt(process.env.DB_PORT || '1433'),
     options: {
@@ -37,14 +37,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const result = await pool.request().query(`
             SELECT 
-                CodProd as id, 
-                Descrip as nombre, 
-                Precio1 as precio, 
-                Precio2 as precioMayor, 
-                Existen as stock,
-                Refere as categoria
-            FROM SAPROD
-            WHERE Existen > 0
+                P.CodProd as id, 
+                P.Descrip as nombre, 
+                P.Precio1 as precio, 
+                P.Precio2 as precioMayor, 
+                P.Existen as stock,
+                I.Descrip as categoria
+            FROM SAPROD P
+            LEFT JOIN SAINSTA I ON P.CodInst = I.CodInst
+            WHERE P.Existen > 0
         `);
 
         // Map to your Product interface structure
