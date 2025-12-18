@@ -23,16 +23,21 @@ const departmentIcons: Record<string, any> = {
     'Farmacia': Pill
 };
 
-const departments: Department[] = [
-    'Víveres', 'Ferretería', 'Charcutería y Carnicería', 'Quincallería',
-    'Electrodomésticos', 'Maquillaje y Cuidado Personal', 'Mascotas', 'Farmacia'
-];
+// Derived dynamically
+// const departments: Department[] = [ ... ];
 
 export const ClientView = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<Department | 'Todos'>('Todos');
     const { t } = useLanguageStore();
     const { products, isLoading, error } = useProductStore();
+
+    // Dynamically extract categories from available products
+    const departments = useMemo(() => {
+        const uniqueCats = Array.from(new Set(products.map(p => p.categoria)));
+        // Optional: Sort them
+        return uniqueCats.sort();
+    }, [products]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {

@@ -32,8 +32,8 @@ export const useProductStore = create<ProductState>((set) => ({
                 // set({ products: mockProducts, isLoading: false });
                 set({ products: [], isLoading: false }); // Or keep empty
             }
-        } catch (err) {
-            set({ error: 'Failed to fetch products', isLoading: false });
+        } catch (err: any) {
+            set({ error: err.message || 'Failed to fetch products', isLoading: false });
         }
     },
     resetToMock: async () => {

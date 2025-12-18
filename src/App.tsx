@@ -11,6 +11,8 @@ import { ProfilePage } from './pages/ProfilePage';
 // Importaciones esenciales para el estado global y de autenticación
 import { useProductStore } from './store/useProductStore';
 import { useAuthStore } from './store/useAuthStore';
+import { useAdminAuthStore } from './store/useAdminAuthStore';
+import { AdminLoginPage } from './pages/AdminLoginPage';
 import { useAuth } from '../context/AuthContext'; // 💡 EL CONTEXTO CON EL ESTADO DE CARGA DE FIREBASE
 
 // ------------------------------------------------------------------
@@ -22,6 +24,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   // La lógica de ESPERA se mueve al componente App.
   if (!user || !user.isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
+
+const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { currentAdmin } = useAdminAuthStore();
+  if (!currentAdmin) {
+    return <Navigate to="/admin/login" replace />;
   }
   return <>{children}</>;
 };
@@ -52,6 +62,7 @@ function App() {
       <Routes>
         {/* Ruta pública de login */}
         <Route path="/login" element={<AuthPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
 
         {/* Rutas protegidas */}
         <Route path="/" element={
@@ -83,10 +94,10 @@ function App() {
         } />
 
         <Route path="/admin" element={
-          <ProtectedRoute>
+          <ProtectedAdminRoute>
             <Navbar />
             <AdminView />
-          </ProtectedRoute>
+          </ProtectedAdminRoute>
         } />
       </Routes>
     </Router>

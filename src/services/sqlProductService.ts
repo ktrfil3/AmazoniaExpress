@@ -10,7 +10,15 @@ export const fetchProductsFromDB = async (): Promise<Product[]> => {
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            let errorMessage = `Error ${response.status}: ${response.statusText}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.details) errorMessage = errorData.details;
+                else if (errorData.error) errorMessage = errorData.error;
+            } catch (e) {
+                // Ignore JSON parse error, use status text
+            }
+            throw new Error(errorMessage);
         }
         const data = await response.json();
         return data as Product[];
