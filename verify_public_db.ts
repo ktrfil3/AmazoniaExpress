@@ -7,7 +7,7 @@ const config = {
     database: 'AMAZONIA',
     port: 17304,
     options: {
-        encrypt: false,
+        encrypt: true,
         trustServerCertificate: true,
         connectionTimeout: 5000, // Short timeout for test
         requestTimeout: 5000

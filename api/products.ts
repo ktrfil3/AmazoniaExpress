@@ -8,7 +8,7 @@ const config = {
     database: process.env.DB_NAME || 'AMAZONIA',
     port: parseInt(process.env.DB_PORT || '17304'),
     options: {
-        encrypt: false, // Changed to false to try connecting to non-SSL server
+        encrypt: true, // Enabled encryption for Ngrok/Remote
         trustServerCertificate: true,
     },
 };
