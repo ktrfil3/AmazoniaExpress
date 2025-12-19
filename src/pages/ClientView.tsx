@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import type { Department } from '../types';
 import { useLanguageStore } from '../store/useLanguageStore';
+import { Footer } from '../components/layout/Footer';
+import { NewsSection } from '../components/client/NewsSection';
 
 const departmentIcons: Record<string, any> = {
     'Víveres': ShoppingBag,
@@ -38,6 +40,14 @@ export const ClientView = () => {
         return uniqueCats.sort();
     }, [products]);
 
+    const ITEMS_PER_PAGE = 16;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Reset page when filters change
+    useMemo(() => {
+        setCurrentPage(1);
+    }, [searchTerm, selectedCategory]);
+
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
             const matchesSearch = product.nombre.toLowerCase().includes(searchTerm.toLowerCase());
@@ -45,6 +55,17 @@ export const ClientView = () => {
             return matchesSearch && matchesCategory;
         });
     }, [products, searchTerm, selectedCategory]);
+
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+    const currentProducts = filteredProducts.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="min-h-screen bg-[#F6F6F6] pb-32 md:pb-20">
@@ -133,15 +154,61 @@ export const ClientView = () => {
                                     <h2 className="text-2xl font-bold text-gray-900">
                                         {selectedCategory === 'Todos' ? t('products.all') : selectedCategory}
                                     </h2>
-                                    <span className="text-sm text-gray-500">{filteredProducts.length} {t('products.items')}</span>
+                                    <span className="text-sm text-gray-500">
+                                        Mostrando {currentProducts.length} de {filteredProducts.length} productos
+                                    </span>
                                 </div>
 
                                 {filteredProducts.length > 0 ? (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        {filteredProducts.map(product => (
-                                            <ProductCard key={product.id} product={product} />
-                                        ))}
-                                    </div>
+                                    <>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {currentProducts.map(product => (
+                                                <ProductCard key={product.id} product={product} />
+                                            ))}
+                                        </div>
+
+                                        {/* Pagination Controls */}
+                                        {totalPages > 1 && (
+                                            <div className="flex justify-center items-center gap-2 mt-8">
+                                                <button
+                                                    onClick={() => handlePageChange(currentPage - 1)}
+                                                    disabled={currentPage === 1}
+                                                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                >
+                                                    ←
+                                                </button>
+
+                                                {/* Page Numbers */}
+                                                <div className="flex gap-1 overflow-x-auto max-w-[200px] sm:max-w-none scrollbar-hide">
+                                                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                                        .filter(p => p === 1 || p === totalPages || (p >= currentPage - 2 && p <= currentPage + 2))
+                                                        .map((page, index, array) => (
+                                                            <>
+                                                                {index > 0 && array[index - 1] !== page - 1 && <span className="px-2 self-center">...</span>}
+                                                                <button
+                                                                    key={page}
+                                                                    onClick={() => handlePageChange(page)}
+                                                                    className={`w-8 h-8 rounded-full font-medium transition-all ${currentPage === page
+                                                                        ? 'bg-uber-500 text-white shadow-md transform scale-110'
+                                                                        : 'text-gray-600 hover:bg-gray-100'
+                                                                        }`}
+                                                                >
+                                                                    {page}
+                                                                </button>
+                                                            </>
+                                                        ))}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handlePageChange(currentPage + 1)}
+                                                    disabled={currentPage === totalPages}
+                                                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                >
+                                                    →
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 ) : (
                                     <div className="text-center py-20 bg-white rounded-2xl shadow-uber">
                                         <Filter className="mx-auto h-12 w-12 text-gray-300 mb-3" />
@@ -171,6 +238,14 @@ export const ClientView = () => {
 
             {/* Mobile Bottom Cart */}
             <BottomCart />
+
+            {/* News & Blog Section */}
+            <div className="mt-24 border-t border-gray-200">
+                <NewsSection />
+            </div>
+
+            {/* Footer */}
+            <Footer />
         </div>
     );
 };
