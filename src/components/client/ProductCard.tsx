@@ -60,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     return (
         <Link to={`/product/${product.id}`} className="block h-full">
-            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group border border-gray-100 flex flex-col h-full">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group border border-gray-100 dark:border-gray-700 flex flex-col h-full">
                 <div className="relative h-40 overflow-hidden flex-shrink-0">
                     <img
                         src={product.imagen}
@@ -69,8 +69,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         loading="lazy"
                     />
                     {/* Category Badge */}
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
-                        <span className="text-[10px] font-bold text-gray-700 uppercase tracking-wide">
+                    <div className="absolute top-3 left-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
+                        <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                             {product.categoria === 'Maquillaje y Cuidado Personal' ? 'Cuidado' : product.categoria}
                         </span>
                     </div>
@@ -82,18 +82,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                             e.stopPropagation();
                             toggleFavorite(product.id);
                         }}
-                        className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white shadow-sm transition-all z-10"
+                        className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700 shadow-sm transition-all z-10"
                     >
                         <Heart
                             size={18}
-                            className={`transition-colors ${isFavorite(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                            className={`transition-colors ${isFavorite(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-500'}`}
                         />
                     </button>
                 </div>
 
                 <div className="p-4 flex flex-col flex-grow">
                     <div className="mb-3 flex-grow">
-                        <h3 className="text-base font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
+                        <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-1 line-clamp-2 leading-tight">
                             {product.nombre}
                         </h3>
 
@@ -106,15 +106,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                                             key={star}
                                             className={`w-3 h-3 ${star <= Math.round(product.rating!)
                                                 ? 'fill-yellow-400 text-yellow-400'
-                                                : 'text-gray-300'
+                                                : 'text-gray-300 dark:text-gray-600'
                                                 }`}
                                         />
                                     ))}
                                 </div>
-                                <span className="text-gray-600">{product.rating.toFixed(1)}</span>
+                                <span className="text-gray-600 dark:text-gray-400">{product.rating.toFixed(1)}</span>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                 <span>Nuevo producto</span>
                             </div>
                         )}
@@ -123,12 +123,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     <div className="mt-auto space-y-3">
                         {/* Price Toggle */}
                         {hasWholesalePrice ? (
-                            <div className="flex bg-gray-100 p-1 rounded-lg" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                            <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                                 <button
                                     onClick={() => setPricingMode('unit')}
                                     className={`flex-1 py-1 text-xs font-semibold rounded-md transition-all ${pricingMode === 'unit'
-                                        ? 'bg-white text-gray-900 shadow-sm'
-                                        : 'text-gray-500 hover:text-gray-700'
+                                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                         }`}
                                 >
                                     Detal
@@ -136,8 +136,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                                 <button
                                     onClick={() => setPricingMode('wholesale')}
                                     className={`flex-1 py-1 text-xs font-semibold rounded-md transition-all ${pricingMode === 'wholesale'
-                                        ? 'bg-white text-gray-900 shadow-sm'
-                                        : 'text-gray-500 hover:text-gray-700'
+                                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                                         }`}
                                 >
                                     Mayor
@@ -149,10 +149,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                         <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span className="text-xs text-gray-500 font-medium">
+                                <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                                     {pricingMode === 'unit' ? 'Precio Unitario' : 'Precio al Mayor'}
                                 </span>
-                                <span className="text-lg font-bold text-gray-900">
+                                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                                     {format(pricingMode === 'unit' ? product.precio : product.precioMayor!)}
                                 </span>
                             </div>

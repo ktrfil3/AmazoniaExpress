@@ -1,35 +1,54 @@
 import { useState, useEffect } from 'react';
 import { useCurrencyStore } from '../../store/useCurrencyStore';
+import { useProductStore } from '../../store/useProductStore';
 import { analyticsService } from '../../services/analyticsService';
-import { TrendingUp, DollarSign, ShoppingCart, Calendar, RotateCw, Trash2 } from 'lucide-react';
+import { reviewService } from '../../services/reviewService';
+import { TrendingUp, DollarSign, ShoppingCart, Calendar, RotateCw, Trash2, Star, ArrowDown } from 'lucide-react';
 
 export const SalesDashboard = () => {
     const { format } = useCurrencyStore();
     const [loading, setLoading] = useState(true);
-    const [metrics, setMetrics] = useState({
+    const [metrics, setMetrics] = useState<{
+        totalRevenue: number;
+        totalTransactions: number;
+        todaySales: number;
+        monthSales: number;
+        yearSales: number;
+        topProducts: { name: string; quantity: number; revenue: number }[];
+    }>({
         totalRevenue: 0,
         totalTransactions: 0,
         todaySales: 0,
         monthSales: 0,
         yearSales: 0,
-        topProducts: [] as { name: string; quantity: number; revenue: number }[]
+        topProducts: []
     });
+
+    const { products } = useProductStore();
+    const [reviewStats, setReviewStats] = useState<{
+        topRated: any[];
+        bottomRated: any[];
+    }>({ topRated: [], bottomRated: [] });
+
+    useEffect(() => {
+        loadData();
+    }, [products]);
 
     const loadData = async () => {
         setLoading(true);
         try {
-            const data = await analyticsService.getMetrics();
-            setMetrics(data);
+            const [metricsData, reviewsData] = await Promise.all([
+                analyticsService.getMetrics(),
+                reviewService.getReviewStats(products)
+            ]);
+            setMetrics(metricsData);
+            setReviewStats(reviewsData);
         } catch (error) {
             console.error('Error loading metrics:', error);
         } finally {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        loadData();
-    }, []);
 
     const handleReset = async () => {
         if (window.confirm('¿Estás seguro de BORRAR TODAS las estadísticas? Esta acción no se puede deshacer.')) {
@@ -46,13 +65,8 @@ export const SalesDashboard = () => {
         );
     }
 
-    // Determine max value for chart scaling
-    // (Simplification: using a static max or relative to total revenue for visualization)
-    // For a real chart, we'd need daily breakdown from the service. 
-    // Implementing a simple visual for now based on available totals.
-
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -150,6 +164,65 @@ export const SalesDashboard = () => {
                             <p className="text-sm">Aún no hay ventas registradas</p>
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* Reputation Section */}
+            <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                    Reputación de Productos
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Top Rated */}
+                    <div className="bg-white rounded-xl shadow-uber border border-gray-100 p-6">
+                        <h4 className="font-bold text-green-700 mb-4 flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5" />
+                            Top 10 Mejor Valorados
+                        </h4>
+                        <div className="space-y-3">
+                            {reviewStats.topRated.map((product, i) => (
+                                <div key={product.id} className="flex items-center gap-3 border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+                                    <span className="text-sm font-bold text-gray-400 w-6">#{i + 1}</span>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-semibold text-gray-900 line-clamp-1">{product.name}</p>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                                            <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                                            {product.averageRating.toFixed(1)} ({product.count} reseñas)
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {reviewStats.topRated.length === 0 && (
+                                <p className="text-sm text-gray-400 italic text-center py-4">Sin suficientes datos</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Bottom Rated */}
+                    <div className="bg-white rounded-xl shadow-uber border border-gray-100 p-6">
+                        <h4 className="font-bold text-red-600 mb-4 flex items-center gap-2">
+                            <ArrowDown className="w-5 h-5" />
+                            Top 10 Peor Valorados
+                        </h4>
+                        <div className="space-y-3">
+                            {reviewStats.bottomRated.map((product, i) => (
+                                <div key={product.id} className="flex items-center gap-3 border-b border-gray-50 pb-2 last:border-0 last:pb-0">
+                                    <span className="text-sm font-bold text-gray-400 w-6">#{i + 1}</span>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-semibold text-gray-900 line-clamp-1">{product.name}</p>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                                            <Star className="w-3 h-3 text-gray-300" />
+                                            {product.averageRating.toFixed(1)} ({product.count} reseñas)
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {reviewStats.bottomRated.length === 0 && (
+                                <p className="text-sm text-gray-400 italic text-center py-4">Sin suficientes datos</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

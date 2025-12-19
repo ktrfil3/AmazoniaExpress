@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Star, User } from 'lucide-react';
 import type { Review } from '../../types';
 import { useAuthStore } from '../../store/useAuthStore';
-import { api } from '../../services/api';
+import { reviewService } from '../../services/reviewService';
 
 interface ProductReviewsProps {
     productId: string;
@@ -28,7 +28,8 @@ export const ProductReviews = ({ productId, reviews, rating, totalReviews, onRev
 
         setSubmitting(true);
         try {
-            await api.addReview(productId, {
+            await reviewService.addReview({
+                productId,
                 usuario: user.name || 'Usuario',
                 rating: newRating,
                 comentario: comment

@@ -7,6 +7,7 @@ import { ProductReviews } from '../components/client/ProductReviews';
 import { useCartStore } from '../store/useCartStore';
 import { useProductStore } from '../store/useProductStore';
 import { useCurrencyStore } from '../store/useCurrencyStore';
+import { reviewService } from '../services/reviewService';
 import type { Product, Review } from '../types';
 
 export const ProductDetail = () => {
@@ -47,25 +48,14 @@ export const ProductDetail = () => {
                 setSelectedVariations(initial);
             }
 
-            // Mock reviews for demo
-            setReviews([
-                {
-                    id: '1',
-                    productId: id,
-                    usuario: 'María González',
-                    rating: 5,
-                    comentario: 'Excelente producto, muy buena calidad',
-                    fecha: new Date(Date.now() - 86400000 * 2).toISOString()
-                },
-                {
-                    id: '2',
-                    productId: id,
-                    usuario: 'Carlos Pérez',
-                    rating: 4,
-                    comentario: 'Buen precio y rápida entrega',
-                    fecha: new Date(Date.now() - 86400000 * 5).toISOString()
-                }
-            ]);
+            // Fetch real reviews
+            try {
+                const fetchedReviews = await reviewService.getReviews(id);
+                setReviews(fetchedReviews);
+            } catch (error) {
+                console.error("Failed to load reviews:", error);
+                setReviews([]);
+            }
         }
 
         setLoading(false);
