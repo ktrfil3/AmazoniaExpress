@@ -6,7 +6,7 @@ const config = {
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
     server: process.env.DB_SERVER || '200.149.92.208', // Default to Public IP for Vercel/Prod
     database: process.env.DB_NAME || 'AMAZONIA',
-    port: parseInt(process.env.DB_PORT || '1433'),
+    port: parseInt(process.env.DB_PORT || '14330'),
     options: {
         encrypt: false, // Changed to false to try connecting to non-SSL server
         trustServerCertificate: true,
