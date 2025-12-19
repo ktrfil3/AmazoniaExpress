@@ -4,9 +4,9 @@ import sql from 'mssql';
 const config = {
     user: process.env.DB_USER || 'userdesarrollointernoama',
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
-    server: process.env.DB_SERVER || '200.149.92.208', // Default to Public IP for Vercel/Prod
+    server: process.env.DB_SERVER || '0.tcp.sa.ngrok.io', // Public IP via Ngrok
     database: process.env.DB_NAME || 'AMAZONIA',
-    port: parseInt(process.env.DB_PORT || '14330'),
+    port: parseInt(process.env.DB_PORT || '17304'),
     options: {
         encrypt: false, // Changed to false to try connecting to non-SSL server
         trustServerCertificate: true,

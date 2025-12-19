@@ -3,9 +3,9 @@ import sql from 'mssql';
 const config = {
     user: 'userdesarrollointernoama',
     password: 'O8FZ2fmaEWkC4HR9E02Kf5',
-    server: '200.149.92.208', // Public IP
+    server: '0.tcp.sa.ngrok.io', // Public IP
     database: 'AMAZONIA',
-    port: 14330,
+    port: 17304,
     options: {
         encrypt: false,
         trustServerCertificate: true,
