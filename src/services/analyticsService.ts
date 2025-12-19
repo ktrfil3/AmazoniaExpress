@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, query, where, orderBy, deleteDoc, Timestamp, writeBatch } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, orderBy, Timestamp, writeBatch } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import type { CartItem } from '../types';
 
