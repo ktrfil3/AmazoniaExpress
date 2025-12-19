@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { CartItem, Product } from '../types';
+import { analyticsService } from '../services/analyticsService';
 
 interface CartState {
     items: CartItem[];
@@ -15,6 +16,7 @@ interface CartState {
     shippingAddress: string;
     shippingCost: number;
     setShippingAddress: (address: string) => void;
+    checkout: (customerdata: { name: string; phone: string; paymentMethod: string }) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -100,6 +102,18 @@ export const useCartStore = create<CartState>()(
                 set({
                     shippingAddress: address,
                     shippingCost: isSantaElena ? 5 : 0 // Default logic
+                });
+            },
+
+            checkout: (customerData) => {
+                const { items, getTotalPrice } = get();
+                // Record sale in background (Firestore)
+                analyticsService.recordSale({
+                    items,
+                    total: getTotalPrice(),
+                    customerName: customerData.name,
+                    customerPhone: customerData.phone,
+                    paymentMethod: customerData.paymentMethod
                 });
             }
         }),

@@ -4,7 +4,7 @@ import { useCartStore } from '../store/useCartStore';
 import { useCurrencyStore } from '../store/useCurrencyStore';
 
 export const CartPage = () => {
-    const { items, updateQuantity, removeFromCart, getTotalPrice, getTotalItems, clearCart } = useCartStore();
+    const { items, updateQuantity, removeFromCart, getTotalPrice, getTotalItems, clearCart, checkout } = useCartStore();
     const { format } = useCurrencyStore();
 
     const handleCheckout = () => {
@@ -37,6 +37,14 @@ export const CartPage = () => {
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/584249317720?text=${encodedMessage}`;
+
+        // Record sale
+        checkout({
+            name: 'Cliente WhatsApp',
+            phone: '',
+            paymentMethod: 'WhatsApp'
+        });
+
         window.open(whatsappUrl, '_blank');
         clearCart();
     };
