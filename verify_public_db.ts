@@ -5,7 +5,7 @@ const config = {
     password: 'O8FZ2fmaEWkC4HR9E02Kf5',
     server: '0.tcp.sa.ngrok.io', // Public IP
     database: 'AMAZONIA',
-    port: 11699,
+    port: 12537,
     options: {
         encrypt: true,
         trustServerCertificate: true,
