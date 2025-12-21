@@ -6,12 +6,12 @@ const config = {
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
     server: process.env.DB_SERVER || '0.tcp.sa.ngrok.io', // Public IP via Ngrok
     database: process.env.DB_NAME || 'AMAZONIA',
-    port: parseInt(process.env.DB_PORT || '11699'),
+    port: parseInt(process.env.DB_PORT || '10912'),
     options: {
         encrypt: false,
         trustServerCertificate: true,
         cryptoCredentialsDetails: {
-            minVersion: 'TLSv1'
+            minVersion: 'TLSv1' as any
         }
     },
 };
@@ -32,11 +32,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        const pool = await sql.connect({
+        const pool = await new sql.ConnectionPool({
             ...config,
-            connectionTimeout: 15000,
-            requestTimeout: 15000
-        });
+            connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || '30000'),
+            requestTimeout: parseInt(process.env.DB_REQUEST_TIMEOUT || '30000')
+        }).connect();
 
         const result = await pool.request().query(`
             SELECT 
