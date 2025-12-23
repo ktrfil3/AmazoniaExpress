@@ -9,7 +9,7 @@ const BLOG_POSTS = [
         category: "Productos",
         author: "Admin",
         date: "18 Dic 2025",
-        image: "src/assets/coqui.jpeg"
+        image: "/coqui.jpeg"
     },
     {
         id: 2,
@@ -18,7 +18,7 @@ const BLOG_POSTS = [
         category: "Anuncios",
         author: "Gerencia",
         date: "15 Dic 2025",
-        image: "src/assets/mercado.jpeg"
+        image: "/mercado.jpeg"
     },
     {
         id: 3,

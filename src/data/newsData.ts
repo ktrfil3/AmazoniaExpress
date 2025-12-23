@@ -16,7 +16,7 @@ export const NEWS_ITEMS = [
             <p>Ven a visitarnos y prueba estos sabores únicos. ¡Están disponibles por tiempo limitado!</p>
         `,
         date: "18 Dic 2025",
-        image: "/src/assets/coqui.jpeg",
+        image: "/coqui.jpeg",
         author: "Departamento de Compras"
     },
     {
@@ -35,7 +35,7 @@ export const NEWS_ITEMS = [
             <p>¡Te esperamos para celebrar juntos!</p>
         `,
         date: "15 Dic 2025",
-        image: "/src/assets/mercado.jpeg",
+        image: "/mercado.jpeg",
         author: "Gerencia"
     },
     {
