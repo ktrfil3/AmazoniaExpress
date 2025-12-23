@@ -16,7 +16,7 @@ export const NEWS_ITEMS = [
             <p>Ven a visitarnos y prueba estos sabores únicos. ¡Están disponibles por tiempo limitado!</p>
         `,
         date: "18 Dic 2025",
-        image: "src/assets/coqui.jpeg",
+        image: "/assets/coqui.jpeg",
         author: "Departamento de Compras"
     },
     {
