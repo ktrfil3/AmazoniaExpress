@@ -1,5 +1,22 @@
-import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Heart } from 'lucide-react';
+import { Facebook, Instagram, MapPin, Phone, Mail, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const Tiktok = ({ className }: { className?: string }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+);
 
 export const Footer = () => {
     return (
@@ -19,11 +36,11 @@ export const Footer = () => {
                         <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-uber-500 hover:text-white dark:hover:text-white transition-all transform hover:scale-110 shadow-sm">
                             <Facebook className="w-6 h-6" />
                         </a>
-                        <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-pink-600 hover:text-white dark:hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                        <a href="https://www.instagram.com/amazonia_express/" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-pink-600 hover:text-white dark:hover:text-white transition-all transform hover:scale-110 shadow-sm">
                             <Instagram className="w-6 h-6" />
                         </a>
-                        <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-blue-400 hover:text-white dark:hover:text-white transition-all transform hover:scale-110 shadow-sm">
-                            <Twitter className="w-6 h-6" />
+                        <a href="https://www.tiktok.com/@amazonia.express?_r=1&_t=ZM-92SvY1UoDhz" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-blue-400 hover:text-white dark:hover:text-white transition-all transform hover:scale-110 shadow-sm">
+                            <Tiktok className="w-6 h-6" />
                         </a>
                     </div>
                 </div>

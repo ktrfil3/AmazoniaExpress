@@ -66,7 +66,16 @@ export const SwipeableCartItem = ({ item, onRemove }: SwipeableCartItemProps) =>
                     <p className="text-sm font-semibold text-gray-900 truncate">{item.nombre}</p>
                     <p className="text-xs text-gray-500">{item.quantity}x {format(item.precio)}</p>
                 </div>
-                <span className="text-sm font-bold text-gray-900 pr-2">{format(item.precio * item.quantity)}</span>
+                <div className="flex items-center gap-2 pr-2">
+                    <span className="text-sm font-bold text-gray-900">{format(item.precio * item.quantity)}</span>
+                    <button
+                        onClick={() => onRemove(item.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors hidden sm:block"
+                        title="Eliminar producto"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
             </div>
 
             {/* Overlay button for actual deletion when swiped */}

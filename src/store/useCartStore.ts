@@ -17,6 +17,20 @@ interface CartState {
     shippingCost: number;
     setShippingAddress: (address: string) => void;
     checkout: (customerdata: { name: string; phone: string; paymentMethod: string }) => void;
+    // Delivery Configuration
+    deliveryConfig: {
+        gasPrice: number;
+        storeLocation: { lat: number; lng: number };
+    };
+    updateDeliveryConfig: (config: Partial<{ gasPrice: number; storeLocation: { lat: number; lng: number } }>) => void;
+    deliveryInfo: {
+        distance: number;
+        vehicle: string;
+        cost: number;
+        finalPrice?: number;
+        requiresQuote?: boolean;
+    } | null;
+    setDeliveryInfo: (info: { distance: number; vehicle: string; cost: number; finalPrice?: number; requiresQuote?: boolean } | null) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -107,13 +121,33 @@ export const useCartStore = create<CartState>()(
 
             checkout: (customerData) => {
                 const { items, getTotalPrice } = get();
-                // Record sale in background (Firestore)
                 analyticsService.recordSale({
                     items,
                     total: getTotalPrice(),
                     customerName: customerData.name,
                     customerPhone: customerData.phone,
                     paymentMethod: customerData.paymentMethod
+                });
+            },
+
+            // Delivery State
+            deliveryConfig: {
+                gasPrice: 7.8, // Default user provided
+                storeLocation: { lat: 4.60226, lng: -61.11025 } // HVXR+53V Santa Elena de Uairén
+            },
+
+            updateDeliveryConfig: (newConfig) => {
+                set((state) => ({
+                    deliveryConfig: { ...state.deliveryConfig, ...newConfig }
+                }));
+            },
+
+            deliveryInfo: null,
+
+            setDeliveryInfo: (info) => {
+                set({
+                    deliveryInfo: info,
+                    shippingCost: info ? (info.finalPrice || info.cost) : 0
                 });
             }
         }),

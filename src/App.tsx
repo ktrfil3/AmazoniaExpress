@@ -9,6 +9,7 @@ import { CartPage } from './pages/CartPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { BlogPage } from './pages/BlogPage';
+import { ArticlePage } from './pages/ArticlePage';
 
 // Importaciones esenciales para el estado global y de autenticación
 import { useProductStore } from './store/useProductStore';
@@ -106,6 +107,13 @@ function App() {
           <ProtectedRoute>
             <Navbar />
             <BlogPage />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/blog/:id" element={
+          <ProtectedRoute>
+            <Navbar />
+            <ArticlePage />
           </ProtectedRoute>
         } />
 

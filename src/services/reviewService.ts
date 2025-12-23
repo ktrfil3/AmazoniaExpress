@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import type { Review } from '../types';
 
@@ -25,12 +25,12 @@ export const reviewService = {
         try {
             const q = query(
                 collection(db, REVIEWS_COLLECTION),
-                where('productId', '==', productId),
-                orderBy('fecha', 'desc')
+                where('productId', '==', productId)
+                // orderBy('fecha', 'desc') // Removed to avoid missing index error
             );
 
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => {
+            const reviews = snapshot.docs.map(doc => {
                 const data = doc.data();
                 return {
                     id: doc.id,
@@ -38,6 +38,9 @@ export const reviewService = {
                     fecha: data.fecha.toDate().toISOString() // Convert Timestamp to ISO string for frontend
                 } as Review;
             });
+
+            // Sort client-side
+            return reviews.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
         } catch (error) {
             console.error('Error fetching reviews:', error);
             return [];

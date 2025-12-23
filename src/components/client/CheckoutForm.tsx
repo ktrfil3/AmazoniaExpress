@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -6,6 +6,7 @@ import { useCurrencyStore } from '../../store/useCurrencyStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
 import { MapPin, Smartphone, Truck, Store, Clock } from 'lucide-react';
 import { SwipeableCartItem } from './SwipeableCartItem';
+import { DeliveryCalculator } from './DeliveryCalculator';
 
 interface CheckoutFormInputs {
     name: string;
@@ -17,7 +18,7 @@ interface CheckoutFormInputs {
 }
 
 export const CheckoutForm = () => {
-    const { items, getTotalPrice, getSubtotal, shippingCost, clearCart, removeFromCart } = useCartStore();
+    const { items, getTotalPrice, getSubtotal, shippingCost, clearCart, removeFromCart, updateDeliveryConfig, deliveryInfo } = useCartStore();
     const { user } = useAuthStore();
     const { format } = useCurrencyStore();
     const { t } = useLanguageStore();
@@ -29,32 +30,66 @@ export const CheckoutForm = () => {
         }
     });
 
+    // Force strict store location (Santa Elena) to fix persistence issues
+    useEffect(() => {
+        updateDeliveryConfig({
+            storeLocation: { lat: 4.60226, lng: -61.11025 },
+            gasPrice: 7.8
+        });
+    }, []);
+
     const [locationLoading, setLocationLoading] = useState(false);
+    const [gpsLocation, setGpsLocation] = useState<{ lat: number; lng: number } | null>(null);
     const deliveryMethod = watch('deliveryMethod');
 
     const getLocation = () => {
         setLocationLoading(true);
         if (navigator.geolocation) {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const coords = `${position.coords.latitude}, ${position.coords.longitude}`;
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const coords = `${latitude}, ${longitude}`;
                     setValue('coords', coords);
+                    setGpsLocation({ lat: latitude, lng: longitude });
+
+                    // Reverse Geocoding
+                    try {
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await response.json();
+                        if (data && data.display_name) {
+                            setValue('address', data.display_name);
+                        }
+                    } catch (err) {
+                        console.error("Failed to reverse geocode:", err);
+                    }
+
                     setLocationLoading(false);
                 },
                 (error) => {
                     console.error(error);
-                    alert('Error obtaining location.');
+                    let msg = 'Error obteniendo ubicación.';
+                    if (error.code === 1) msg = 'Permiso denegado.';
+                    alert(msg);
                     setLocationLoading(false);
-                }
+                },
+                options
             );
         } else {
-            alert('Geolocation not supported.');
+            alert('Geolocalización no soportada.');
             setLocationLoading(false);
         }
     };
 
     const onSubmit = (data: CheckoutFormInputs) => {
-        let message = `*Pedido - Amazonia Express*\n\n`;
+        const isQuote = deliveryInfo?.requiresQuote;
+        let message = isQuote ? `*Solicitud de Cotización - Carga Pesada*\n\n` : `*Pedido - Amazonia Express*\n\n`;
+
         message += `*Cliente:* ${data.name}\n`;
         message += `*Teléfono:* ${data.phone}\n`;
         message += `*Método:* ${data.deliveryMethod === 'delivery' ? 'Envío 🛵' : 'Retiro 🏪'}\n\n`;
@@ -63,6 +98,7 @@ export const CheckoutForm = () => {
             message += `*Dirección:* ${data.address}\n`;
             message += `*Referencia:* ${data.reference || 'N/A'}\n`;
             if (data.coords) message += `*Ubicación:* https://maps.google.com/?q=${data.coords}\n`;
+            if (isQuote) message += `*Vehículo Requerido:* ${deliveryInfo?.vehicle}\n`;
             message += `\n`;
         }
 
@@ -71,7 +107,12 @@ export const CheckoutForm = () => {
             message += `- ${item.quantity}x ${item.nombre} (${format(item.precio * item.quantity)})\n`;
         });
 
-        message += `\n*TOTAL: ${format(getTotalPrice())}*`;
+        if (isQuote) {
+            message += `\n*SUBTOTAL PRODUCTOS: ${format(getSubtotal())}*`;
+            message += `\n*Nota:* Solicito cotización para el traslado de esta carga.`;
+        } else {
+            message += `\n*TOTAL: ${format(getTotalPrice())}*`;
+        }
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/584249317720?text=${encodedMessage}`;
@@ -180,6 +221,8 @@ export const CheckoutForm = () => {
                             {locationLoading ? '...' : <><MapPin size={14} /> GPS</>}
                         </button>
                     </div>
+
+                    <DeliveryCalculator userLocation={gpsLocation} />
                 </div>
             )}
 
@@ -193,17 +236,29 @@ export const CheckoutForm = () => {
                         <Clock className="w-4 h-4" />
                         Envío
                     </span>
-                    <span className={`font-semibold ${shippingCost === 0 ? 'text-uber-500' : 'text-gray-900'}`}>
-                        {shippingCost === 0 ? 'Gratis' : format(shippingCost)}
+                    <span className={`font-semibold ${shippingCost === 0 && !deliveryInfo?.requiresQuote ? 'text-uber-500' : 'text-gray-900'}`}>
+                        {deliveryInfo?.requiresQuote
+                            ? <span className="text-amber-600">Requiere Cotización</span>
+                            : (shippingCost === 0 ? 'Gratis' : format(shippingCost))}
                     </span>
                 </div>
                 <div className="flex items-center justify-between pt-3 border-t border-gray-200">
                     <span className="text-base font-bold text-gray-900">Total</span>
-                    <span className="text-2xl font-bold text-gray-900">{format(getTotalPrice())}</span>
+                    <span className="text-2xl font-bold text-gray-900">
+                        {deliveryInfo?.requiresQuote
+                            ? format(getSubtotal())
+                            : format(getTotalPrice())}
+                    </span>
                 </div>
+                {deliveryInfo?.requiresQuote && (
+                    <p className="text-xs text-amber-600 mt-1 text-right">
+                        * El costo de envío para carga pesada se acuerda aparte.
+                    </p>
+                )}
 
                 <button
                     type="submit"
+                    disabled={deliveryMethod === 'delivery' && !items.length}
                     className="w-full bg-black hover:bg-gray-900 text-white font-bold py-4 px-6 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                     <Smartphone size={20} />

@@ -9,7 +9,7 @@ const BLOG_POSTS = [
         category: "Productos",
         author: "Admin",
         date: "18 Dic 2025",
-        image: "https://images.unsplash.com/photo-1582401656397-9d777d4c2b02?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+        image: "src/assets/coqui.jpeg"
     },
     {
         id: 2,
@@ -18,7 +18,7 @@ const BLOG_POSTS = [
         category: "Anuncios",
         author: "Gerencia",
         date: "15 Dic 2025",
-        image: "https://images.unsplash.com/photo-1543091993-8cfb469b820d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+        image: "src/assets/mercado.jpeg"
     },
     {
         id: 3,
