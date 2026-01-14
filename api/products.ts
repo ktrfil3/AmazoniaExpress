@@ -7,7 +7,7 @@ const config = {
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
     server: process.env.DB_SERVER || '0.tcp.sa.ngrok.io',
     database: process.env.DB_NAME || 'AMAZONIA',
-    port: parseInt(process.env.DB_PORT || '16824'),
+    port: parseInt(process.env.DB_PORT || '1433'),
     options: {
         encrypt: false, // Ensure this matches your server config
         trustServerCertificate: true,
