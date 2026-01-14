@@ -40,8 +40,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return;
     }
 
+    let pool;
     try {
-        const pool = await new sql.ConnectionPool({
+        pool = await new sql.ConnectionPool({
             ...config,
             connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || '30000'),
             requestTimeout: parseInt(process.env.DB_REQUEST_TIMEOUT || '30000')
@@ -82,5 +83,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             code: err.code,
             stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
         });
+    } finally {
+        if (pool) {
+            try {
+                await pool.close();
+                console.log('🔒 Connection pool closed');
+            } catch (closeErr) {
+                console.error('Error closing pool:', closeErr);
+            }
+        }
     }
+
 }
