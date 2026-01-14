@@ -1,20 +1,29 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import sql from 'mssql';
+import 'dotenv/config';
 
 const config = {
     user: process.env.DB_USER || 'userdesarrollointernoama',
     password: process.env.DB_PASSWORD || 'O8FZ2fmaEWkC4HR9E02Kf5',
-    server: process.env.DB_SERVER || '0.tcp.sa.ngrok.io', // Public IP via Ngrok
+    server: process.env.DB_SERVER || '0.tcp.sa.ngrok.io',
     database: process.env.DB_NAME || 'AMAZONIA',
     port: parseInt(process.env.DB_PORT || '10912'),
     options: {
-        encrypt: false,
+        encrypt: false, // Ensure this matches your server config
         trustServerCertificate: true,
+        enableArithAbort: true, // Required to prevent socket hang up
         cryptoCredentialsDetails: {
             minVersion: 'TLSv1' as any
         }
     },
 };
+
+console.log('🔌 DB Config:', {
+    server: config.server,
+    port: config.port,
+    user: config.user,
+    database: config.database
+});
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('🔄 API /api/products handler invoked');
